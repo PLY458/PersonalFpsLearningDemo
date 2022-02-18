@@ -21,22 +21,22 @@ public class UIBasePanel : MonoBehaviour
 
     protected virtual void Awake()
     {
+
         FindChildrenControl<Button>();
         FindChildrenControl<Image>();
         FindChildrenControl<TMP_Text>();
         FindChildrenControl<Toggle>();
         FindChildrenControl<Slider>();
         FindChildrenControl<Scrollbar>();
-
+        InitPanel();
     }
-
 
     /// <summary>
     /// 必要的面板初始化
     /// </summary>
     protected virtual void InitPanel()
     {
-
+        
     }
 
 
@@ -52,9 +52,9 @@ public class UIBasePanel : MonoBehaviour
     /// <summary>
     /// 隐藏面板
     /// </summary>
-    public virtual void HideMe()
+    protected virtual void DisplayPlane(bool d_Order)
     {
-
+        gameObject.SetActive(d_Order);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class UIBasePanel : MonoBehaviour
                 }
             }
         }
-
+        Debug.LogError("未查到对应UI组件：" + controlName);
         return null;
     }
 
