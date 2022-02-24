@@ -31,6 +31,11 @@ public class UIBasePanel : MonoBehaviour
         InitPanel();
     }
 
+    protected virtual void Update()
+    {
+        RefreshPlane();
+    }
+
     /// <summary>
     /// 必要的面板初始化
     /// </summary>

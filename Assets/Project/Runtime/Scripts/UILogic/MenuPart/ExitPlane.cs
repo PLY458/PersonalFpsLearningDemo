@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using TMPro;
 
 public class ExitPlane : UIBasePanel
@@ -19,7 +20,7 @@ public class ExitPlane : UIBasePanel
         _curtainAlpha.alpha = 0;
         _curtainAlpha.LeanAlpha(1, 0.6f);
 
-        img_Frame.transform.localPosition = new Vector2(0, -Screen.height);
+        img_Frame.transform.localPosition = new Vector2(0, -Screen.height );
         img_Frame.transform.LeanMoveLocalY(0, 0.5f).setEaseOutExpo().delay = 0.1f;
     }
 
@@ -37,13 +38,15 @@ public class ExitPlane : UIBasePanel
         btn_Cancel.onClick.AddListener(ExitDialog);
 
         EventCenter.GetInstance().AddEventListener<bool>("Display_ExitPlane", DisplayPlane);
+
+        DisplayPlane(false);
     }
 
 
     private void ExitDialog()
     {
         _curtainAlpha.LeanAlpha(0, 0.6f);
-        img_Frame.transform.LeanMoveLocalY(-Screen.height, 0.5f)
+        img_Frame.transform.LeanMoveLocalY(-Screen.height * 1.5f, 0.5f)
             .setEaseInExpo().setOnComplete(()=> gameObject.SetActive(false));
     }
 
