@@ -17,33 +17,33 @@ namespace FPS_Movement_Control
         private Vector2 sensitivity = new Vector2(2, 2);
         [SerializeField]
         private Vector2 smoothing = new Vector2(3, 3);
-        [SerializeField]
-        private Vector2 point_Direction;
-        [SerializeField]
-        private Vector2 point_CharacterDirection;
+
+        private Vector2 point_Direction, point_CharacterDirection;
+
+        private Quaternion targetOrientation, targetCharacterOrientation;
 
         void Start()
         {
-            // Set target direction to the camera's initial orientation.
-            point_Direction = transform.localRotation.eulerAngles;
-
-            // Set target direction for the character body to its inital state.
-            if (characterBody)
-                point_CharacterDirection = characterBody.transform.localRotation.eulerAngles;
-
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+
+            // 开头获取相机初始化时的欧拉角
+            targetOrientation = Quaternion.Euler(transform.localRotation.eulerAngles);
+
+            // 开头获取相机初始化时的欧拉角
+            if (characterBody)
+                targetCharacterOrientation = Quaternion.Euler(characterBody.transform.localRotation.eulerAngles);
+            else
+                targetCharacterOrientation = default;
+
+            
         }
 
         void Update()
         {
 
-            // Allow the script to clamp based on a desired target value.
-            var targetOrientation = Quaternion.Euler(point_Direction);
-            var targetCharacterOrientation = Quaternion.Euler(point_CharacterDirection);
-
             // Get raw mouse input for a cleaner reading on more sensitive mice.
-            var mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+            var mouseDelta = PlayController.GetInstance().input_MouseView;
             // Scale input against the sensitivity setting and multiply that against the smoothing value.
             mouseDelta = Vector2.Scale(mouseDelta, new Vector2(sensitivity.x * smoothing.x, sensitivity.y * smoothing.y));
 
@@ -75,6 +75,7 @@ namespace FPS_Movement_Control
                 transform.localRotation *= yRotation;
             }
         }
+
 
         public void AddRecoil(Vector3 recoil, float time)
         {

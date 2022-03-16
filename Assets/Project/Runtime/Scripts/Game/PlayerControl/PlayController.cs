@@ -9,7 +9,11 @@ namespace FPS_Movement_Control
         Idle,
         Walking,
         Crouching,
-        Sprinting
+        Sprinting,
+        Sliding,
+        ClimbingLadder,
+        Vaulting
+
     }
 
 
@@ -21,33 +25,42 @@ namespace FPS_Movement_Control
         // 当前运动状态
         public E_Move_Status status_Current;
 
-        private bool trigger_Interact;
-
-        // 处理输入的数据
+        // 处理运动输入的数据
         [HideInInspector]
         public Vector3 input_HoriDir;
         [HideInInspector]
         public bool input_IsSprint;
         [HideInInspector]
+        public bool input_SprintCancel;
+        [HideInInspector]
         public bool input_IsCrouching;
         [HideInInspector]
         public bool input_IsJumping;
+        [HideInInspector]
+        public Vector2 input_MouseView;
 
-        private PlayerMovement movement_Player;
+        private bool hidingCursor;
+
+
+        public PlayerMovement movement_Player;
+        public CameraMovement movement_Camera;
 
         void Start()
         {
-            trigger_Interact = false;
-
+            hidingCursor = true;
+            
             // 注册玩家输入对应的事件
             EventCenter.GetInstance().AddEventListener<Vector3>("GetMoveDirInput", (input) => input_HoriDir = input);
             EventCenter.GetInstance().AddEventListener<bool>("GetMoveRunInput", (input) => input_IsSprint = input);
+            EventCenter.GetInstance().AddEventListener<bool>("GetMoveRunCancel", (input) => input_SprintCancel = input);
             EventCenter.GetInstance().AddEventListener<bool>("GetCrouchInput", (input) => input_IsCrouching = input);
             EventCenter.GetInstance().AddEventListener<bool>("GetJumpInput", (input) => input_IsJumping = input);
+            EventCenter.GetInstance().AddEventListener<Vector2>("GetViewInput", (input) => input_MouseView = input);
+            EventCenter.GetInstance().AddEventListener<bool>("ControlPlayMenu", PlayMenuControl);
 
-            movement_Player = GetComponent<PlayerMovement>();
             PlayerInput.GetInstance().InitInput();
             PlayerInput.GetInstance().StartOrEndCheck(true);
+
         }
 
         #region 状态更新相关
@@ -56,38 +69,40 @@ namespace FPS_Movement_Control
         {
             if (status_Current == stu)
                 return;
+
             status_Current = stu;
         }
 
 
+        public void CursorControl()
+        {
+            Cursor.visible = hidingCursor;
+            if (!hidingCursor)
+                Cursor.lockState = CursorLockMode.Locked;
+            else
+                Cursor.lockState = CursorLockMode.None;
+
+            hidingCursor = !hidingCursor;
+        }
+
+        private void PlayMenuControl(bool input)
+        {
+            if (!input)
+                return;
+            else
+            {
+                CursorControl();
+            }
+            
+
+        }
+
         // Update is called once per frame
         void Update()
         {
-            
-        }
-
-        /// <summary>
-        /// 检测是否可与物体交互
-        /// </summary>
-        private void UpdateInteraction()
-        {
-            if ((int)status_Current >= 5)
-                trigger_Interact = false;
-            else if (!trigger_Interact)
-            {
-                // TODO: 从玩家运动组件中获取两个条件：是否在地/下坠
-                //if (movement.grounded || movement.moveDirection.y < 0)
-                    trigger_Interact = true;
-            }
-        }
-
-        /// <summary>
-        /// 更新玩家当前运动状态
-        /// </summary>
-        private void UpdateMovingStatus()
-        {
 
         }
+
 
         #endregion
 
@@ -96,11 +111,6 @@ namespace FPS_Movement_Control
 
         #endregion
 
-        #region 输入处理相关
-
-
-
-        #endregion
 
     }
 

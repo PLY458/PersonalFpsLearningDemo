@@ -27,6 +27,7 @@ namespace FPS_Movement_Control
             EventCenter.GetInstance().EventTrigger(methodname, inputValue);
         }
 
+
         /// <summary>
         /// 是否开启输入检测
         /// </summary>
@@ -41,14 +42,20 @@ namespace FPS_Movement_Control
             {
                 return;
             }
-            Debug.Log("开始输入检测！！！"+inputData.MoveDirInput);
             // 检查值传递即是监听输入
             CheckValueInput(inputData.MoveDirInput, "GetMoveDirInput");
             //CheckValueInput(inputData.MouseViewInput, "");
             CheckValueInput(inputData.MoveRunKeeper, "GetMoveRunInput");
+
+            CheckValueInput(inputData.MoveRunUp, "GetMoveRunCancel");
+
             CheckValueInput(inputData.CrouchTrigger, "GetCrouchInput");
             //CheckValueInput(inputData.CrouchKeeper, "");
             CheckValueInput(inputData.JumpKeeper, "GetJumpInput");
+
+            CheckValueInput(inputData.CollectMenuTrigger, "ControlPlayMenu");
+
+            CheckValueInput(inputData.MouseViewInput, "GetViewInput");
         }
 
     }
@@ -86,10 +93,19 @@ namespace FPS_Movement_Control
             }
         }
 
+        public bool CollectMenuTrigger
+        {
+            get { return Input.GetKeyDown(KeyCode.M); }
+        }
 
         public bool MoveRunKeeper
         {
             get { return Input.GetKey(KeyCode.LeftShift); }
+        }
+
+        public bool MoveRunUp
+        {
+            get { return Input.GetKeyUp(KeyCode.LeftShift); }
         }
 
         public bool CrouchTrigger

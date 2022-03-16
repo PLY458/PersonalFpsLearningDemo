@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class MenuPlane : UIBasePanel
+public class MenuOldPlane : UIBasePanel
 {
     private TMP_Text txt_DemoTitle;
 
