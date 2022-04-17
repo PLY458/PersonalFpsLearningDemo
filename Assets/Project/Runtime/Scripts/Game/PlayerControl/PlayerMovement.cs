@@ -68,7 +68,7 @@ namespace FPS_Movement_Control
         [SerializeField]
         private float height_Jump_idle = 1f;
         [SerializeField]
-        private float height_Jump_Crouch = 0.5f;
+        private float height_Jump_Crouch = 0.8f;
 
         [HideInInspector]
         public CharacterController controller;
@@ -99,6 +99,7 @@ namespace FPS_Movement_Control
             info_Player = new PlayerIntractInfo(controller.radius, controller.height, height_Crouch);
             stamina = time_Sprint;
 
+            // TODO 嵌入贴墙跑
             SpecialMoveType sliding = GetComponent<SlidingMovement>();
             SpecialMoveType vaulting = GetComponent<VaultOverMovement>();
             SpecialMoveType labbering = GetComponent<LabberClimbMovement>();
@@ -202,13 +203,16 @@ namespace FPS_Movement_Control
             if(dir_Jump != Vector3.zero)
             {
                 Vector3 dir = (dir_Jump * speed_Jump);
+                // 确认地面哪些方向有有效移动
                 if (dir.x != 0) dir_GroundMove.x = dir.x;
                 if (dir.y != 0) dir_GroundMove.y = dir.y;
                 if (dir.z != 0) dir_GroundMove.z = dir.z;
 
+                // 空中方向预先读取地面方向的数据
                 Vector3 move = dir_GroundMove;
                 dir_AirMove = move;
                 move.y = 0;
+
                 force_Jump = Mathf.Min(move.magnitude, speed_Jump);
                 force_Jump = Mathf.Max(force_Jump, speed_Walk);
             }

@@ -2,51 +2,64 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum E_Collection_Type
+public enum E_Collectable_Type
 {
-    Coin,
-    Cameo,
+    Touch,
+    Interact,
+    Destory
 }
 
+
+/// <summary>
+///  连击得分设计思路
+///  1. 记录连击的次数
+///  2. 连击计时器保障连击添加的有效性
+///  3. 记录当前分数和目标分数
+/// </summary>
 public class CollectMgr : SingletonMono<CollectMgr>
 {
+    [SerializeField]
+    private float streakExpiredTime = 2.0f;
+    [SerializeField]
+    private int streakCount = 0;
 
-    private int score_Current;
+    private float streakTimer;
 
-    private int score_Hight;
+    private int scoreCurrent;
+    private int scoreHight;
 
     //TODO 制作加分和归挡高分的操作
 
     private void Start()
     {
-        score_Current = 0;
-
-        score_Hight = 0; //TODO 借助玩家信息存储分数(srcObj)
+        scoreCurrent = 0;
+        streakTimer = 0;
+        scoreHight = 0; //TODO 借助玩家信息存储分数(srcObj)
     }
 
-    public void AddPoint(E_Collection_Type type)
+
+    public void GatherPoint(int score, E_Collectable_Type type)
     {
-        score_Current += 100;
-        EventCenter.GetInstance().EventTrigger("SetUICurrentScore", score_Current);
-        StartCoroutine(OperatePointSwitch());
+        // 将连击计时器归味
+        streakTimer = streakExpiredTime;
+        // 对分数做连击处理
+        streakCount++;
+        scoreCurrent += score * streakCount;
+
+        //EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
+        //StartCoroutine(OperatePointSwitch());
     }
 
     private IEnumerator OperatePointSwitch()
     {
         yield return new WaitForSeconds(1.5f);
-        if (score_Current > score_Hight)
+        if (scoreCurrent > scoreHight)
         {
-            score_Hight = score_Current;
-            EventCenter.GetInstance().EventTrigger("SetUIHightScore", score_Hight);
+            scoreHight = scoreCurrent;
+            EventCenter.GetInstance().EventTrigger("SetUIHightScore", scoreHight);
         }
-        score_Current = 0;
-        EventCenter.GetInstance().EventTrigger("SetUICurrentScore", score_Current);
+        scoreCurrent = 0;
+        EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
     }
 }
 
-
-public static class CollectPoints
-{
-        
-
-}

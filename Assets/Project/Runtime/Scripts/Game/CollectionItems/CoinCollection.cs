@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinCollection : MonoBehaviour
+public class CoinCollection : CollectObject
 {
-    [SerializeField]
-    private E_Collection_Type type_Collected;
 
     [SerializeField]
     private Transform fbx_Coin;
@@ -34,11 +32,18 @@ public class CoinCollection : MonoBehaviour
         fbx_Coin.Rotate(factor_CoinRot * new Vector3(0, speed_CoinRot, 0) * Time.deltaTime);
     }
 
+    protected override void CallToGatherPoints()
+    {
+        base.CallToGatherPoints();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("´¥·¢¼Ç·Ö");
         if (other.gameObject.CompareTag("Player"))
         {
-            CollectMgr.GetInstance().AddPoint(type_Collected);
+            CallToGatherPoints();
+            Destroy(gameObject, 0.02f);
         }
     }
 

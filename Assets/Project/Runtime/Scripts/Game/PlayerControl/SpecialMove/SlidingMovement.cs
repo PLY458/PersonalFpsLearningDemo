@@ -35,7 +35,7 @@ namespace FPS_Movement_Control
             {
                 if (controlledSlide)
                     dir_slide = transform.forward;
-                playmovement.Input_Jump = (dir_slide + Vector3.up) * 1f;
+                playmovement.Input_Jump = (dir_slide + Vector3.up) * 0.8f;
                 playmovement.Timer_Jump = -1;
                 slideTime = 0;
             }
@@ -46,6 +46,7 @@ namespace FPS_Movement_Control
 
         }
 
+        // TODO 滑铲加入方向输入取消
         public override void CheckSpecialAct()
         {
 
