@@ -43,7 +43,7 @@ public class CoinCollection : CollectObject
         if (other.gameObject.CompareTag("Player"))
         {
             CallToGatherPoints();
-            Destroy(gameObject, 0.02f);
+            Destroy(gameObject, 0.02f); // 改良为对象池收纳
         }
     }
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public enum E_Collectable_Type
 {
-    Touch,
-    Interact,
-    Destory
+    Touch, // 触碰式
+    Interact, // 交互式
+    Hidding // 隐藏状态
 }
 
 
@@ -35,31 +35,62 @@ public class CollectMgr : SingletonMono<CollectMgr>
         scoreCurrent = 0;
         streakTimer = 0;
         scoreHight = 0; //TODO 借助玩家信息存储分数(srcObj)
+
     }
 
+    private void FixedUpdate()
+    {
+        // TODO 记录连击开始和结束
+
+        if (streakTimer > 0)
+        {
+            streakTimer -= Time.fixedDeltaTime;
+            if (streakTimer <= 0)
+            {
+                StartCoroutine(OperatePointSwitch());
+                return;
+            }
+            float percent = streakTimer / streakExpiredTime;
+            if (Mathf.Abs(percent) > Mathf.Epsilon)
+            {
+                EventCenter.GetInstance().EventTrigger("SetUIStreakBar", percent * 100.0f);
+
+            }
+        }
+
+    }
 
     public void GatherPoint(int score, E_Collectable_Type type)
     {
-        // 将连击计时器归味
-        streakTimer = streakExpiredTime;
+        if (type <= E_Collectable_Type.Touch)
+        {
+            streakTimer = streakExpiredTime;
+        }
+
         // 对分数做连击处理
         streakCount++;
-        scoreCurrent += score * streakCount;
+        if (streakCount > 1)
+            EventCenter.GetInstance().EventTrigger("SetUICurrentCombo", streakCount);
+        //scoreCurrent += score * streakCount;
+        scoreCurrent += score;
+        EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
+        
 
-        //EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
-        //StartCoroutine(OperatePointSwitch());
+
     }
 
     private IEnumerator OperatePointSwitch()
     {
-        yield return new WaitForSeconds(1.5f);
-        if (scoreCurrent > scoreHight)
+        yield return null;
+        if ((scoreCurrent * streakCount) > scoreHight)
         {
-            scoreHight = scoreCurrent;
+            scoreHight = scoreCurrent * streakCount;
             EventCenter.GetInstance().EventTrigger("SetUIHightScore", scoreHight);
         }
         scoreCurrent = 0;
+        streakCount = 0;
         EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
+        EventCenter.GetInstance().EventTrigger("SetUICurrentCombo", streakCount);
     }
 }
 
