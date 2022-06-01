@@ -15,15 +15,7 @@ public class LoadingPlane : UIBasePanel
 
     private CanvasGroup _curtainAlpha;
 
-    private void OnEnable()
-    {
-        _curtainAlpha.alpha = 0;
-        _curtainAlpha.LeanAlpha(1, 0.6f);
 
-        img_Frame.transform.localPosition = new Vector2(Screen.width, 0);
-        img_Frame.transform.LeanMoveLocalX(0, 0.5f).setEaseOutExpo().delay = 0.2f;
-
-    }
 
     protected override void InitPanel()
     {
@@ -49,6 +41,30 @@ public class LoadingPlane : UIBasePanel
         DisplayPlane(false);
     }
 
+    private void OnEnable()
+    {
+        _curtainAlpha.alpha = 0;
+        _curtainAlpha.LeanAlpha(1, 0.6f);
+
+        img_Frame.transform.localPosition = new Vector2(Screen.width, 0);
+        img_Frame.transform.LeanMoveLocalX(0, 0.5f).setEaseOutExpo().delay = 0.2f;
+
+        StartCoroutine(StartLoadingSceneDelay("GameScene"));
+    }
+
+    private IEnumerator StartLoadingSceneDelay(string name)
+    {
+
+        yield return new WaitForSeconds(0.5f);
+        //Debug.Log("加载场景启动！！");
+        ScenceMgr.GetInstance().LoadSceneAsyn(name,
+            () => {
+                //Debug.Log("场景加载完成: ");
+                GameManager.GetInstance().InitGame();
+            });
+
+    }
+
     public override void RefreshPlane()
     {
         base.RefreshPlane();
@@ -59,7 +75,7 @@ public class LoadingPlane : UIBasePanel
 
         int wholePercent = (int)(Progress * 100f);
 
-        Debug.Log("获取进度条数据：" + wholePercent.ToString());
+        //Debug.Log("获取进度条数据：" + wholePercent.ToString());
 
         slid_Loading.value = Progress * 100f;
 

@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FPS_Movement_Control
-{
 
     public class PlayerInput : SingletonAutoMono<PlayerInput>
     {
@@ -43,6 +41,7 @@ namespace FPS_Movement_Control
                 return;
             }
             // 检查值传递即是监听输入
+            // 运动相关:
             CheckValueInput(inputData.MoveDirInput, "GetMoveDirInput");
             //CheckValueInput(inputData.MouseViewInput, "");
             CheckValueInput(inputData.MoveRunKeeper, "GetMoveRunInput");
@@ -56,6 +55,15 @@ namespace FPS_Movement_Control
             CheckValueInput(inputData.CollectMenuTrigger, "ControlPlayMenu");
 
             CheckValueInput(inputData.MouseViewInput, "GetViewInput");
+
+            CheckValueInput(inputData.InteractTrigger, "GetInteractInput");
+
+            // 武器相关：
+            CheckValueInput(inputData.ShootTrigger, "GetFireInput");
+
+            CheckValueInput(inputData.AimTrigger, "GetAimInput");
+
+            CheckValueInput(inputData.ReloadTrigger, "GetReloadInput");
         }
 
     }
@@ -98,6 +106,8 @@ namespace FPS_Movement_Control
             get { return Input.GetKeyDown(KeyCode.M); }
         }
 
+        // 运动属性相关
+
         public bool MoveRunKeeper
         {
             get { return Input.GetKey(KeyCode.LeftShift); }
@@ -121,8 +131,37 @@ namespace FPS_Movement_Control
         public bool JumpKeeper
         {
             get { return Input.GetKey(KeyCode.Space); }
+        }   
+
+        public bool InteractTrigger
+        {
+            get { return Input.GetKeyDown(KeyCode.F); }
+        }
+        // 射击属性相关
+        public bool ReloadTrigger
+        {
+            get { return Input.GetKeyDown(KeyCode.R); }
+        }
+
+        public bool AimTrigger
+        {
+            get { return Input.GetMouseButtonDown(1); }
+        }
+
+        public bool AimKeeper
+        {
+            get { return Input.GetMouseButton(1); }
+        }
+
+        public bool ShootTrigger
+        {
+            get { return Input.GetMouseButton(0); }
+        }
+
+        public float MouseScroll
+        {
+            get { return Input.GetAxisRaw("Mouse ScrollWheel"); }
         }
     }
 
-}
 

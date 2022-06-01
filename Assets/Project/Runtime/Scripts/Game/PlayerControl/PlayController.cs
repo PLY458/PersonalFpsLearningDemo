@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +20,11 @@ namespace FPS_Movement_Control
 
     public class PlayController : SingletonMono<PlayController>
     {
-        // 碰撞层级设置
-        public LayerMask layer_Collsion;
+        // 运动碰撞层级设置
+        public LayerMask layer_moveCollsion;
 
         // 当前运动状态
-        public E_Move_Status status_Current;
+        public E_Move_Status move_Current;
 
         // 处理运动输入的数据
         [HideInInspector]
@@ -38,9 +39,10 @@ namespace FPS_Movement_Control
         public bool input_IsJumping;
         [HideInInspector]
         public Vector2 input_MouseView;
+        [HideInInspector]
+        public bool input_IsInteract;
 
         private bool hidingCursor;
-
 
         public PlayerMovement movement_Player;
         public CameraMovement movement_Camera;
@@ -57,30 +59,38 @@ namespace FPS_Movement_Control
             EventCenter.GetInstance().AddEventListener<bool>("GetJumpInput", (input) => input_IsJumping = input);
             EventCenter.GetInstance().AddEventListener<Vector2>("GetViewInput", (input) => input_MouseView = input);
             EventCenter.GetInstance().AddEventListener<bool>("ControlPlayMenu", PlayMenuControl);
+            EventCenter.GetInstance().AddEventListener<bool>("GetInteractInput", (input) => input_IsInteract = input);
 
             PlayerInput.GetInstance().InitInput();
             PlayerInput.GetInstance().StartOrEndCheck(true);
 
         }
 
+
         #region 状态更新相关
 
         public void SwitchStatus(E_Move_Status stu)
         {
-            if (status_Current == stu)
+            if (move_Current == stu)
                 return;
 
-            status_Current = stu;
+            move_Current = stu;
         }
-
 
         public void CursorControl()
         {
             Cursor.visible = hidingCursor;
             if (!hidingCursor)
+            {
                 Cursor.lockState = CursorLockMode.Locked;
+                EventCenter.GetInstance().EventTrigger("Undisplay_RankListPlane");
+            }
             else
+            {
                 Cursor.lockState = CursorLockMode.None;
+                EventCenter.GetInstance().EventTrigger("Display_RankListPlane", true);
+
+            }
 
             hidingCursor = !hidingCursor;
         }

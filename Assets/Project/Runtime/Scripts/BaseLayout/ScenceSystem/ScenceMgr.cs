@@ -21,7 +21,8 @@ public class ScenceMgr : BaseMgr<ScenceMgr>
     public void LoadScenesyn(string name, UnityAction fun = null)
     {
         //加载场景
-        SceneManager.LoadScene(name);
+        SceneManager.LoadScene(name, LoadSceneMode.Single);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(name));
         //需要补充执行的方法
         fun();
     }
@@ -38,7 +39,8 @@ public class ScenceMgr : BaseMgr<ScenceMgr>
 
     private IEnumerator ReallyLoadSceneAsyn(string name, UnityAction fun = null)
     {
-        AsyncOperation ao = SceneManager.LoadSceneAsync(name);
+        AsyncOperation ao = SceneManager.LoadSceneAsync(name, LoadSceneMode.Single);
+        ao.allowSceneActivation = true;
 
         //得到场景加载的一个进度
         while (!ao.isDone)
@@ -46,6 +48,8 @@ public class ScenceMgr : BaseMgr<ScenceMgr>
             //事件中心 向外分发 进度情况 外面想用就用
             EventCenter.GetInstance().EventTrigger("Repear_LoadingScene", ao.progress);
             //这里更新进度条
+            Debug.Log("场景是否激活？: " + SceneManager.GetActiveScene().name);
+
             yield return ao.progress;
         }
 

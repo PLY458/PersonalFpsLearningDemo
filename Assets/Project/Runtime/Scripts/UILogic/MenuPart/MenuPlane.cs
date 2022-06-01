@@ -45,31 +45,21 @@ public class MenuPlane : UIBasePanel
 
     private void Click_BtnExit()
     {
+        AudioMgr.GetInstance().PlaySound("UIgmSound","BtnOnClick");
         EventCenter.GetInstance().EventTrigger("Display_ExitPlane", true);
         
     }
 
     private void Click_BtnStart()
     {
-        EventCenter.GetInstance().EventTrigger("Display_LoadingPlane", true);
-        StartCoroutine(StartLoadingSceneDelay("GameScene"));
-    }
-
-    private IEnumerator StartLoadingSceneDelay(string name)
-    {
+        AudioMgr.GetInstance().PlaySound("UIgmSound", "BtnOnClick");
+        EventCenter.GetInstance().EventTrigger("Display_SignOperatePlane", true);
         
-        yield return new WaitForSeconds(0.5f);
-        Debug.Log("加载场景启动！！");
-        ScenceMgr.GetInstance().LoadSceneAsyn(name, 
-            ()=> {
-                Debug.Log("场景加载完成");
-                GameManager.GetInstance().InitGame();
-            });
-
     }
 
     private void Click_BtnSetting()
     {
+        AudioMgr.GetInstance().PlaySound("UIgmSound", "BtnOnClick");
         EventCenter.GetInstance().EventTrigger("Display_SettingPlane", true);
     }
 

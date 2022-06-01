@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 单例调用时，在场景生成Gameobject
 public class SingletonAutoMono<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T instance;

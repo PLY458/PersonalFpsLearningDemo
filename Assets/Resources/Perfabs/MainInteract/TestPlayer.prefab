@@ -1,5 +1,67 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1711097814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1711097815}
+  - component: {fileID: 1711097817}
+  - component: {fileID: 1711097816}
+  m_Layer: 31
+  m_Name: ImpactRig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1711097815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711097814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5680886480117377444}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1711097817
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711097814}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 2
+--- !u!114 &1711097816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711097814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3203a04c7ef891c4ca38ed393c368f7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _priority: 0
+  _material: {fileID: 11400000, guid: 91cf4672fa5174949b8cd299c0e56683, type: 2}
 --- !u!1 &1834775603
 GameObject:
   m_ObjectHideFlags: 0
@@ -9,7 +71,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1834775604}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: FBX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +104,7 @@ GameObject:
   - component: {fileID: 4137521483307771}
   - component: {fileID: 33863642255838081}
   - component: {fileID: 23641727974010159}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: Flag_Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +191,7 @@ GameObject:
   - component: {fileID: 5680886479345946364}
   - component: {fileID: 5680886479345946366}
   - component: {fileID: 5680886479345946371}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: TestPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -149,6 +211,7 @@ Transform:
   m_Children:
   - {fileID: 5680886481426509221}
   - {fileID: 1834775604}
+  - {fileID: 1711097815}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -194,9 +257,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ece90b20ecf851e4fa15e1c31ea99d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  layer_Collsion:
+  layer_moveCollsion:
     serializedVersion: 2
-    m_Bits: 1920
+    m_Bits: 128
+  layer_interact:
+    serializedVersion: 2
+    m_Bits: 131072
   status_Current: 0
   input_HoriDir: {x: 0, y: 0, z: 0}
   input_IsSprint: 0
@@ -236,9 +302,18 @@ MonoBehaviour:
   speed_Sprint: 8
   speed_Crouch: 0.9
   speed_Climb: 2
-  speed_Jump: 8
+  speed_Jump: 6
   force_Gravity: 20
   factor_AntiBump: 0.75
+  impactObject: {fileID: 1711097814}
+  footstepLeftTag:
+    _value: 0
+    _tagLibrary: {fileID: 11400000, guid: 2c0cf30861913d749adccb60cce340e9, type: 2}
+  footstepRightTag:
+    _value: 1
+    _tagLibrary: {fileID: 11400000, guid: 2c0cf30861913d749adccb60cce340e9, type: 2}
+  footstepInterval: 2.25
+  footOffset: {x: 0.35, y: 0, z: 0}
   dir_GroundMove: {x: 0, y: 0, z: 0}
   dir_AirMove: {x: 0, y: 0, z: 0}
   pos_Contact: {x: 0, y: 0, z: 0}
@@ -246,9 +321,9 @@ MonoBehaviour:
   reduce_Sprint: 2
   reserve_Sprint: 4
   minlesstime_Sprint: 2
-  height_Crouch: 0.9
-  height_Jump_idle: 1
-  height_Jump_Crouch: 0.5
+  height_Crouch: 0.86
+  height_Jump_idle: 0.56
+  height_Jump_Crouch: 0.75
   controller: {fileID: 0}
   mesh_playWalking: {fileID: 4300000, guid: 29b72adfc35a15b4c915d8f94bc4610e, type: 3}
   mesh_playCrouch: {fileID: 4300000, guid: 2b154cafcee6a3940a1299655c3bc009, type: 3}
@@ -266,8 +341,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   changeTo: 4
-  speedMin_Slide: 7.38
-  speedMax_Slide: 11.2
+  speedMin_Slide: 8
+  speedMax_Slide: 12
+  jumpHeight_Slide: 1.73
 --- !u!114 &5680886479345946366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +375,7 @@ MonoBehaviour:
   changeTo: 5
   layer_Labber:
     serializedVersion: 2
-    m_Bits: 2560
+    m_Bits: 2048
 --- !u!1 &5680886481426509218
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,7 +388,7 @@ GameObject:
   - component: {fileID: 5680886481426509222}
   - component: {fileID: 5680886481426509223}
   - component: {fileID: 5680886481426509220}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: HeadCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,7 +440,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 16311
+    m_Bits: 147447
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -424,3 +500,4 @@ MonoBehaviour:
   clampInDegrees: {x: 360, y: 180}
   sensitivity: {x: 0.5, y: 0.5}
   smoothing: {x: 2, y: 2}
+  transCamera: {fileID: 0}

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using DarkTonic.MasterAudio;
 
 
 /// <summary>
 /// 音效和音乐管理器
 /// </summary>
-public class AudioMgr : BaseMgr<AudioMgr>
+public class AudioMgr : SingletonAutoMono<AudioMgr>
 {
     //背景音乐
     private AudioSource bkMusic = null;
@@ -55,12 +56,12 @@ public class AudioMgr : BaseMgr<AudioMgr>
 
         }
         //当资源加载完后，回调一个音效组件
-        ResourcesMgr.GetInstance().LoadAsync<AudioClip>("AudioRes/BGM/"+name, (clip) =>
-        {
-            bkMusic.clip = clip;
-            bkMusic.volume = bkValue;
-            bkMusic.Play();
-        });
+        ResourcesMgr.GetInstance().LoadAsync<AudioClip>("AudioRes/BGM/" + name, (clip) =>
+          {
+              bkMusic.clip = clip;
+              bkMusic.volume = bkValue;
+              bkMusic.Play();
+          });
     }
 
     /// <summary>
@@ -91,7 +92,7 @@ public class AudioMgr : BaseMgr<AudioMgr>
     public void ChangeBKValue(float v)
     {
         bkValue = v;
-        if(bkMusic == null)
+        if (bkMusic == null)
             return;
         bkMusic.volume = bkValue;
     }
@@ -101,8 +102,10 @@ public class AudioMgr : BaseMgr<AudioMgr>
     /// <summary>
     /// 播放音效
     /// </summary>
-    public void PlaySound(string name, bool isloop,UnityAction<AudioSource> callBack = null)
+    public void PlaySound(string name, bool isloop, UnityAction<AudioSource> callBack = null)
     {
+
+
         if (soundObj == null)
         {
             soundObj = new GameObject();
@@ -142,5 +145,22 @@ public class AudioMgr : BaseMgr<AudioMgr>
             source.Stop();
         }
     }
+    #endregion
+
+    #region MasterAudio控制
+
+    public void PlaySound(string soundGroup, string selectSound, float delaySoundTime = 0.0f)
+    {
+
+       var result = MasterAudio.PlaySound(soundGroup,soundValue,null,delaySoundTime,selectSound);
+        if (result != null && result.SoundPlayed)
+        {
+            Debug.Log("音效已启动！");
+            return;
+        }
+
+        Debug.Log("启动失败！");
+    }
+
     #endregion
 }

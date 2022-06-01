@@ -265,13 +265,13 @@ GameObject:
   m_Component:
   - component: {fileID: 2802543324089512054}
   - component: {fileID: 2802543324089512055}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ExitPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2802543324089512054
 RectTransform:
   m_ObjectHideFlags: 0
@@ -317,7 +317,7 @@ GameObject:
   - component: {fileID: 2802543324160314012}
   - component: {fileID: 2802543324160314015}
   - component: {fileID: 2802543324160314013}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: img_Curtain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -404,7 +404,7 @@ GameObject:
   - component: {fileID: 2802543325127752502}
   - component: {fileID: 2802543325127752500}
   - component: {fileID: 2802543325127752503}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: img_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 2802543325515480477}
   - component: {fileID: 2802543325515480467}
   - component: {fileID: 2802543325515480466}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: txt_Dialoge
   m_TagString: Untagged
   m_Icon: {fileID: 0}

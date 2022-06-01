@@ -72,12 +72,13 @@ public class CollectMgr : SingletonMono<CollectMgr>
         if (streakCount > 1)
             EventCenter.GetInstance().EventTrigger("SetUICurrentCombo", streakCount);
         //scoreCurrent += score * streakCount;
+
         scoreCurrent += score;
+
         EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
         
-
-
     }
+
 
     private IEnumerator OperatePointSwitch()
     {

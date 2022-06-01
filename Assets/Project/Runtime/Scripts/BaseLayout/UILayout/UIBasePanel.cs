@@ -28,6 +28,7 @@ public class UIBasePanel : MonoBehaviour
         FindChildrenControl<Toggle>();
         FindChildrenControl<Slider>();
         FindChildrenControl<Scrollbar>();
+        FindChildrenControl<TMP_InputField>();
         InitPanel();
     }
 
