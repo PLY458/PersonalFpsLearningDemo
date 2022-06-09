@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3235860998314640329}
   - component: {fileID: 3235860998314640330}
   m_Layer: 5
-  m_Name: BottomSide
+  m_Name: img_BottomSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 3235860998614475635}
   - component: {fileID: 3235860998614475644}
   m_Layer: 5
-  m_Name: LeftSide
+  m_Name: img_LeftSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -195,7 +195,7 @@ GameObject:
   - component: {fileID: 3235860998809683435}
   - component: {fileID: 3235860998809683412}
   m_Layer: 5
-  m_Name: RightSide
+  m_Name: img_RightSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 3235860999151619110}
   - component: {fileID: 3235860999151619111}
   m_Layer: 5
-  m_Name: TopSide
+  m_Name: img_TopSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 3235860999376333840}
   - component: {fileID: 3235860999376333841}
   m_Layer: 5
-  m_Name: Cursor
+  m_Name: img_Cursor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -464,6 +464,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3235860999851981903}
+  - component: {fileID: 454504530}
   m_Layer: 5
   m_Name: CrossHairPlane
   m_TagString: Untagged
@@ -487,6 +488,7 @@ RectTransform:
   - {fileID: 3235860998614475645}
   - {fileID: 3235860999151619104}
   - {fileID: 3235860998314640331}
+  - {fileID: 5841613783126931953}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -495,3 +497,90 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &454504530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3235860999851981896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ca4aaf4d5c4d2841a8dee67c3ee50ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &5635221186286138361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5841613783126931953}
+  - component: {fileID: 8541353066402072207}
+  - component: {fileID: 9078317419509110311}
+  m_Layer: 5
+  m_Name: img_HitMark
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &5841613783126931953
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635221186286138361}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3235860999851981903}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8541353066402072207
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635221186286138361}
+  m_CullTransparentMesh: 1
+--- !u!114 &9078317419509110311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635221186286138361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 304435b0ab7e4fe46887549395c1f405, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1

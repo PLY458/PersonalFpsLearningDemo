@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 /// </summary>
 public class PoolData
 {
-    //挂载的池头
-    public GameObject fatherObj;
+
     //对象的池表
     public Stack<GameObject> PoolList;
 
@@ -19,13 +18,8 @@ public class PoolData
     ///   初始化池容器单元
     /// </summary>
     /// <param name="obj">首个游戏物体</param>
-    /// <param name="poolObj">需要依附的池物体</param>
-    public PoolData(GameObject obj, GameObject poolObj)
+    public PoolData(GameObject obj)
     {
-        //给容器头和容器表进行配置
-        fatherObj = new GameObject(obj.name + "pool");
-        //依附在主池上
-        fatherObj.transform.parent = poolObj.transform;
         //初始化子池
         PoolList = new Stack<GameObject>();
         PushObj(obj);
@@ -40,8 +34,7 @@ public class PoolData
         obj.SetActive(false);
         //存入
         PoolList.Push(obj);
-        //重定位在池头物体上
-        obj.transform.SetParent(fatherObj.transform);
+
     }
 
     /// <summary>
@@ -54,8 +47,7 @@ public class PoolData
         obj = PoolList.Pop();
         //激活，让其显示
         obj.SetActive(true);
-        //子对象脱离池对象
-        obj.transform.SetParent(null);
+
         return obj;
     }
 

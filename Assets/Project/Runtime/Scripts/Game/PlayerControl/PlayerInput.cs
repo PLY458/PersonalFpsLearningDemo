@@ -63,6 +63,8 @@ using UnityEngine;
 
             CheckValueInput(inputData.AimTrigger, "GetAimInput");
 
+            CheckValueInput(inputData.AimKeeper, "GetAimKeeper");
+
             CheckValueInput(inputData.ReloadTrigger, "GetReloadInput");
         }
 
@@ -145,17 +147,17 @@ using UnityEngine;
 
         public bool AimTrigger
         {
-            get { return Input.GetMouseButtonDown(1); }
+            get { return Input.GetKeyDown(KeyCode.Mouse1); }
         }
 
         public bool AimKeeper
         {
-            get { return Input.GetMouseButton(1); }
+            get { return Input.GetKey(KeyCode.Mouse1); }
         }
 
         public bool ShootTrigger
         {
-            get { return Input.GetMouseButton(0); }
+            get { return Input.GetKey(KeyCode.Mouse0); }
         }
 
         public float MouseScroll

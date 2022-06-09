@@ -12,12 +12,23 @@ namespace FPS_Movement_Control
 
         public GameObject characterBody;
 
+        [Header("相机操作")]
         [SerializeField]
         private Vector2 clampInDegrees = new Vector2(360, 180);
         [SerializeField]
         private Vector2 sensitivity = new Vector2(2, 2);
         [SerializeField]
         private Vector2 smoothing = new Vector2(3, 3);
+        [SerializeField]
+        Transform overlayCam;
+
+        float adjustToFOV;
+        float adjustSpeed;
+        float adjustDis;
+        Vector3 adjustVec3 = Vector3.zero;
+        float baseFOV = 60f;
+        Camera cam;
+
 
         private Vector2 point_Direction, point_CharacterDirection;
 
@@ -29,7 +40,7 @@ namespace FPS_Movement_Control
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-
+            cam = GetComponent<Camera>();
             // 开头获取相机初始化时的欧拉角
             targetOrientation = Quaternion.Euler(transform.localRotation.eulerAngles);
 
@@ -39,11 +50,15 @@ namespace FPS_Movement_Control
             else
                 targetCharacterOrientation = default;
 
+            baseFOV = cam.fieldOfView;
+            adjustToFOV = baseFOV;
             
         }
 
         void Update()
         {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, adjustToFOV, Time.deltaTime * adjustSpeed);
+            overlayCam.localPosition = Vector3.Lerp(overlayCam.localPosition, adjustVec3, Time.deltaTime * adjustSpeed);
 
             // Get raw mouse input for a cleaner reading on more sensitive mice.
             var mouseDelta = PlayController.GetInstance().input_MouseView;
@@ -77,6 +92,14 @@ namespace FPS_Movement_Control
                 var yRotation = Quaternion.AngleAxis(_mouseAbsolute.x, transform.InverseTransformDirection(Vector3.up));
                 transform.localRotation *= yRotation;
             }
+        }
+
+        public void SetFOV(bool setTo, float fov, float speed, float dis)
+        {
+            adjustSpeed = Mathf.Abs(fov - baseFOV) / (speed / 2);
+            adjustToFOV = (setTo) ? fov : baseFOV;
+            adjustDis = (setTo) ? dis : 0f;
+            adjustVec3.z = adjustDis;
         }
 
 

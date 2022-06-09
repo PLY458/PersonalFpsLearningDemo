@@ -14,9 +14,6 @@ public class PoolMgr : BaseMgr<PoolMgr>
     //缓存池容器（查询表）
     public Dictionary<string, PoolData> poolDic = new Dictionary<string, PoolData>();
 
-    //入池物体
-    public GameObject PoolObj;
-
     /// <summary>
     /// 检索需要的缓冲池并令池物体出表
     /// </summary>
@@ -38,23 +35,33 @@ public class PoolMgr : BaseMgr<PoolMgr>
 
     }
 
+    public GameObject GetPoolobj(string name)
+    {
+        if (poolDic.ContainsKey(name) && poolDic[name].PoolList.Count > 0)
+        {
+            return poolDic[name].GetObj();
+        }
+
+        return null;
+    }
+
+
     /// <summary>
     /// 检索需要的缓冲池并令池物体入表
     /// </summary>
     public void PushPoolobj(string name, GameObject obj)
     {
-        if (PoolObj == null)
-        {
-            PoolObj = new GameObject("Pool");
-        }
-
+        
         if (poolDic.ContainsKey(name))
         {
+            //Debug.Log("得到需要回收的列表：" + name);
             poolDic[name].PushObj(obj);
+
         }
         else
         {
-            poolDic.Add(name, new PoolData(obj, PoolObj));
+            //Debug.Log("回收物体姓名为：" + name);
+            poolDic.Add(name, new PoolData(obj));
         }
 
     }
@@ -63,6 +70,5 @@ public class PoolMgr : BaseMgr<PoolMgr>
     public void Clear()
     {
         poolDic.Clear();
-        PoolObj = null;
     }
 }

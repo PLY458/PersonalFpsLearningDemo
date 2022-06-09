@@ -75,6 +75,7 @@ public class CollectMgr : SingletonMono<CollectMgr>
 
         scoreCurrent += score;
 
+        AudioMgr.GetInstance().PlaySound("Collect", "CoinCollect");
         EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
         
     }
@@ -90,6 +91,8 @@ public class CollectMgr : SingletonMono<CollectMgr>
         }
         scoreCurrent = 0;
         streakCount = 0;
+
+        AudioMgr.GetInstance().PlaySound("Collect", "ScoreSum");
         EventCenter.GetInstance().EventTrigger("SetUICurrentScore", scoreCurrent);
         EventCenter.GetInstance().EventTrigger("SetUICurrentCombo", streakCount);
     }

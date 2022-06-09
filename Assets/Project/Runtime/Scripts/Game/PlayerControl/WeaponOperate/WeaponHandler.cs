@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,11 +18,15 @@ namespace FPS_Weapon_Control
         public WeaponObject weapon;
         // 子弹生成点
         public Transform bulletSpwanPoint;
+
         // 动画字符
         public WeaponAnimations motions;
 
-        [Header("动画状态")]
+        public WeaponFactory effectFactory;
+
+        [Header("武器状态")]
         public E_Handler_Status handlerStu;
+        public int weaponIndex = 0;
 
         private Animator handlrAnimator;
 
@@ -42,9 +47,14 @@ namespace FPS_Weapon_Control
             get{ return (totalAmmo <= 0 && ammoInClip <= 0); }
         }
 
-        private bool ContFireMore
+        public bool ContFireMore
         {
             get { return (handlerStu == E_Handler_Status.Reloading || NoAmmo); }
+        }
+
+        public bool ReadyToReload
+        {
+            get { return ((int)handlerStu < 2 && ammoInClip < weapon.ammoClip && totalAmmo > 0);  }
         }
 
 
@@ -55,8 +65,7 @@ namespace FPS_Weapon_Control
 
         public void InitHandler()
         {
-            // 抬枪，收枪都有对应事件
-
+            effectFactory.FirePrefab = weapon.fireVfx;
             handlrAnimator = GetComponent<Animator>();
         }
 
@@ -66,7 +75,10 @@ namespace FPS_Weapon_Control
 
         }
 
-
+        public void AddRecoil(Vector3 r)
+        {
+            recoil += (WeaponControl.GetInstance().IsAiming) ? (r / 2f) : r;
+        }
 
         private void RefreshHandler()
         {
@@ -85,7 +97,9 @@ namespace FPS_Weapon_Control
 
         public bool FireWeapon()
         {
-
+            FireEffect tEffect = effectFactory.FireVfx;
+            tEffect.SpawnOn(bulletSpwanPoint);
+            AudioMgr.GetInstance().PlaySound("Weapon", "Gun");
             handlrAnimator.Play(motions.Shoot(WeaponControl.GetInstance().IsAiming),0,0);
 
             if (--ammoInClip <= 0)
@@ -109,6 +123,27 @@ namespace FPS_Weapon_Control
             //onPutAway.AddListener(call);
         }
 
+        public void ReloadAmmo()
+        {
+            //reloadStartPoint = 0;
+            handlerStu = E_Handler_Status.Idle;
+            totalAmmo += ammoInClip;
+            totalAmmo -= weapon.ammoClip;
+            ammoInClip = weapon.ammoClip;
+            if (totalAmmo < 0)
+            {
+                ammoInClip += totalAmmo;
+                totalAmmo = 0;
+            }
+
+            //if (listener) listener.onReload.Invoke();
+        }
+
+        #endregion
+
+        #region 动画事件方法：
+
+
         public bool ReloadGun()
         {
             if (ContFireMore)
@@ -123,6 +158,9 @@ namespace FPS_Weapon_Control
             return true;
         }
 
+
+
+
         public bool UpdateSprint(bool playerSprint)
         {
             if (handlerStu != E_Handler_Status.Idle)
@@ -135,8 +173,8 @@ namespace FPS_Weapon_Control
                 handlrAnimator.SetBool("sprinting", playerSprint);
                 return true;
             }
-                
-            
+
+
         }
 
         public bool UpdateWalk(bool playerWalk)
@@ -151,7 +189,7 @@ namespace FPS_Weapon_Control
                 handlrAnimator.SetBool("walking", playerWalk);
                 return true;
             }
-                
+
         }
 
         public bool UpdateAim(bool playerAim)
@@ -166,8 +204,11 @@ namespace FPS_Weapon_Control
                 handlrAnimator.SetBool("aiming", playerAim);
                 return true;
             }
-                
+
         }
+
+
+
 
         #endregion
 

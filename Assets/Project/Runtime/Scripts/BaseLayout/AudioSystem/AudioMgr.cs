@@ -151,15 +151,20 @@ public class AudioMgr : SingletonAutoMono<AudioMgr>
 
     public void PlaySound(string soundGroup, string selectSound, float delaySoundTime = 0.0f)
     {
-
+       // 重新设计log
        var result = MasterAudio.PlaySound(soundGroup,soundValue,null,delaySoundTime,selectSound);
         if (result != null && result.SoundPlayed)
         {
-            Debug.Log("音效已启动！");
             return;
         }
 
-        Debug.Log("启动失败！");
+    }
+
+    public void ChangeSound(string soundGroup, string selectSound,string clipName)
+    {
+        var clip = ResourcesMgr.GetInstance().Load<AudioClip>(clipName);
+
+        MasterAudio.ChangeVariationClip(soundGroup,false,selectSound,clip);
     }
 
     #endregion

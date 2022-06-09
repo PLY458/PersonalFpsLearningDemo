@@ -116,10 +116,6 @@ namespace FPS_Movement_Control
 
         #endregion
 
-        #region ×´Ì¬ÅÐ¶¨Ïà¹Ø
-
-
-        #endregion
 
 
     }

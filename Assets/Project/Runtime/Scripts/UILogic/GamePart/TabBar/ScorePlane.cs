@@ -127,7 +127,7 @@ public class ScorePlane : UIBasePanel
     public void SetCurrentScore(int targetscore)
     {
 
-        AudioMgr.GetInstance().PlaySound("Collect", "CoinCollect");
+        
         jumpBtwBuffer++;
         scoreQueue.Enqueue(targetscore);
     }
