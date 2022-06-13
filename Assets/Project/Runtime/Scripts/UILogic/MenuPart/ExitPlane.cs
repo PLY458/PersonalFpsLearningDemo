@@ -38,6 +38,7 @@ public class ExitPlane : UIBasePanel
 
         EventCenter.GetInstance().AddEventListener<bool>("Display_ExitPlane", DisplayPlane);
 
+
         DisplayPlane(false);
     }
 

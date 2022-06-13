@@ -24,8 +24,6 @@ namespace FPS_Movement_Control
 
         float adjustToFOV;
         float adjustSpeed;
-        float adjustDis;
-        Vector3 adjustVec3 = Vector3.zero;
         float baseFOV = 60f;
         Camera cam;
 
@@ -58,7 +56,6 @@ namespace FPS_Movement_Control
         void Update()
         {
             cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, adjustToFOV, Time.deltaTime * adjustSpeed);
-            overlayCam.localPosition = Vector3.Lerp(overlayCam.localPosition, adjustVec3, Time.deltaTime * adjustSpeed);
 
             // Get raw mouse input for a cleaner reading on more sensitive mice.
             var mouseDelta = PlayController.GetInstance().input_MouseView;
@@ -94,12 +91,11 @@ namespace FPS_Movement_Control
             }
         }
 
-        public void SetFOV(bool setTo, float fov, float speed, float dis)
+        public void SetFOV(bool setTo, float fov, float speed)
         {
             adjustSpeed = Mathf.Abs(fov - baseFOV) / (speed / 2);
             adjustToFOV = (setTo) ? fov : baseFOV;
-            adjustDis = (setTo) ? dis : 0f;
-            adjustVec3.z = adjustDis;
+
         }
 
 

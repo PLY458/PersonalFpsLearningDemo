@@ -64,13 +64,11 @@ public class EventCenter:BaseMgr<EventCenter>
         {
             //有加入多播队列
             (eventDic[name] as EventInfo<T>).actions += action;
-            Debug.Log("原事件："+ name + " 加入新活动：" + action.ToString());
         }
         else
         {
             //没有创建新的队列
             eventDic.Add(name,new EventInfo<T>(action));
-            Debug.Log("加入新事件：" + name + " 首个活动：" + action.ToString());
             
         }
     }
@@ -87,13 +85,11 @@ public class EventCenter:BaseMgr<EventCenter>
         {
             //有加入多播队列
             (eventDic[name] as EventInfo).actions += action;
-            Debug.Log("原事件：" + name + " 加入新活动：" + action.Method.Name.ToString());
         }
         else
         {
             //没有创建新的队列
             eventDic.Add(name,new EventInfo(action));
-            Debug.Log("加入新事件：" + name + " 首个活动：" + action.Method.Name.ToString());
         }
     }
 

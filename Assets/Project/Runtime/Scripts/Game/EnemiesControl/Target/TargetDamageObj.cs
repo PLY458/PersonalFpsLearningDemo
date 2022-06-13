@@ -11,16 +11,28 @@ public class TargetDamageObj : DamageObject
     // 动画管理属性
     //float hurt = 0f;
     //float previousHealth;
+    public MeshRenderer render;
+
+    private void Start()
+    {
+        InitTarget();
+    }
 
     public void InitTarget()
     {
         //previousHealth = health;
+        render = GetComponent<MeshRenderer>();
         ReCoverHealth();
+        TargetController.GetInstance().AddTargetList(this);
     }
 
-    public void UpdateTarget()
+    public void OnTargetDied()
     {
-        //hurt = Mathf.Lerp(hurt, (IsDied) ? 1f : 0f, Time.deltaTime * 4f);
+        ResourcesMgr.GetInstance().LoadAsync<GameObject>("Perfabs/Target/TargetDieVFX", (obj) => {
+            obj.transform.position = transform.position;
+            obj.SetActive(true);
+        });
+        render.enabled = false;
     }
 
     public float GetHealthPercent { get { return Mathf.Clamp( health / maxHealth   , 0f, 1f) ; } }

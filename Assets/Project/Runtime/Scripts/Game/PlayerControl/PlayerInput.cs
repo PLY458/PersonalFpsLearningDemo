@@ -43,6 +43,8 @@ using UnityEngine;
             // 检查值传递即是监听输入
             // 运动相关:
             CheckValueInput(inputData.MoveDirInput, "GetMoveDirInput");
+
+            CheckValueInput(inputData.RawDIrInput, "GetRawDirInput");
             //CheckValueInput(inputData.MouseViewInput, "");
             CheckValueInput(inputData.MoveRunKeeper, "GetMoveRunInput");
 
@@ -66,7 +68,9 @@ using UnityEngine;
             CheckValueInput(inputData.AimKeeper, "GetAimKeeper");
 
             CheckValueInput(inputData.ReloadTrigger, "GetReloadInput");
-        }
+
+            CheckValueInput(inputData.MouseScroll, "GetMouseScroll");
+    }
 
     }
 
@@ -103,7 +107,19 @@ using UnityEngine;
             }
         }
 
-        public bool CollectMenuTrigger
+    public Vector2 RawDIrInput
+    {
+        get
+        {
+            Vector2 i = Vector2.zero;
+            i.x = Input.GetAxisRaw("Horizontal");
+            i.y = Input.GetAxisRaw("Vertical");
+            i *= (i.x != 0.0f && i.y != 0.0f) ? .7071f : 1.0f;
+            return i;
+        }
+    }
+
+    public bool CollectMenuTrigger
         {
             get { return Input.GetKeyDown(KeyCode.M); }
         }

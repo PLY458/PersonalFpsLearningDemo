@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityEngine.Events;
 
 namespace FPS_Weapon_Control
 {
@@ -37,6 +38,8 @@ namespace FPS_Weapon_Control
         bool forceReload = false;
         private float reloadStartTime = default;
 
+        // 获得，收回武器事件
+
         // 后座力相关
         Vector3 aimPos;
         Vector3 recoil;
@@ -58,15 +61,23 @@ namespace FPS_Weapon_Control
         }
 
 
-        private void Start()
-        {
-            InitHandler();
-        }
+        //private void Start()
+        //{
+        //    InitHandler();
+        //}
 
         public void InitHandler()
         {
+            
             effectFactory.FirePrefab = weapon.fireVfx;
             handlrAnimator = GetComponent<Animator>();
+
+            handlerStu = E_Handler_Status.Idle;
+
+            string soundPath = "Sounds/Weapons/" + weapon.description + "/";
+
+            AudioMgr.GetInstance().ChangeSound("Weapon", "Fire", soundPath + weapon.fireSounds);
+            AudioMgr.GetInstance().ChangeSound("Weapon", "Reload", soundPath + weapon.reloadSounds);
         }
 
         private void Update()
@@ -109,7 +120,7 @@ namespace FPS_Weapon_Control
                 
         }
 
-        public void PutAwayWeapon()
+        public void PutAwayWeapon(UnityAction call)
         {
             forceReload = (handlerStu == E_Handler_Status.Reloading || NoAmmo);
             handlerStu = E_Handler_Status.PutAway;
@@ -119,8 +130,8 @@ namespace FPS_Weapon_Control
             //if (listener)
             //    listener.onPutAway.Invoke();
 
-            //onPutAway.RemoveAllListeners();
-            //onPutAway.AddListener(call);
+            //OnPutAway.RemoveAllListeners();
+            //OnPutAway.AddListener(call);
         }
 
         public void ReloadAmmo()
@@ -137,6 +148,17 @@ namespace FPS_Weapon_Control
             }
 
             //if (listener) listener.onReload.Invoke();
+        }
+
+        public void WeaponPutAway()
+        {
+
+            WeaponControl.GetInstance().TakeOutSelectedGun();
+        }
+
+        public void WeaponTakeOut()
+        {
+            WeaponControl.GetInstance().TakeWeaponOut(forceReload ? weaponIndex : -1);
         }
 
         #endregion

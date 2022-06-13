@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc86f925d849c145a92fc8f29572cc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type_Collected: 0
+  typeCollactable: 0
+  scoreObj: 150
   fbx_Coin: {fileID: 9026690518272829013}
   speed_CoinRot: 45
   factor_CoinRot: 1

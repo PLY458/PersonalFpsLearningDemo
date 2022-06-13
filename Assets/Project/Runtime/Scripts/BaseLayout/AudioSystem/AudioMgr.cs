@@ -160,6 +160,11 @@ public class AudioMgr : SingletonAutoMono<AudioMgr>
 
     }
 
+    public void StopSound(string soundGroup)
+    {
+        MasterAudio.StopAllOfSound(soundGroup);
+    }
+
     public void ChangeSound(string soundGroup, string selectSound,string clipName)
     {
         var clip = ResourcesMgr.GetInstance().Load<AudioClip>(clipName);

@@ -60,7 +60,7 @@ public class CollectMgr : SingletonMono<CollectMgr>
 
     }
 
-    public void GatherPoint(int score, E_Collectable_Type type)
+    public void GatherPoint(int score, E_Collectable_Type type = E_Collectable_Type.Touch)
     {
         if (type <= E_Collectable_Type.Touch)
         {

@@ -119,15 +119,13 @@ public class ScorePlane : UIBasePanel
         }
         else
         {
-            btwTimer = 0.0f;
+            btwTimer = jumpBtwTime;
         }
 
     }
 
     public void SetCurrentScore(int targetscore)
     {
-
-        
         jumpBtwBuffer++;
         scoreQueue.Enqueue(targetscore);
     }

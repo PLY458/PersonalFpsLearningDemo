@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class FireEffect : WeaponEntity
@@ -16,12 +18,14 @@ public class FireEffect : WeaponEntity
         }
         if (!isActiveAndEnabled)
             gameObject.SetActive(true);
-        StartCoroutine(RecycleAsync());
+        RecycleAsync();
     }
 
-    IEnumerator RecycleAsync()
+    async void RecycleAsync()
     {
-        yield return new WaitForSeconds(0.3f);
+        await Task.Delay(TimeSpan.FromSeconds(0.3f));
         Recycle();
     }
+
+
 }

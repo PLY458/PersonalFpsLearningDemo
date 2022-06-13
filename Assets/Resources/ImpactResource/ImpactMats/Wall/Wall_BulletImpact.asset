@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minimumVelocity: 1
   _collisionNormalInfluence: 1
-  _particlePrefab: {fileID: 114763219359472444, guid: 77f78753f525e91458e641f1b72fe256, type: 3}
+  _particlePrefab: {fileID: -4292965208092740361, guid: 7025c31efb081d343a0c49278dd649ab, type: 3}
   _isParticleLooped: 0
   _emissionInterval:
     Min: 0.2

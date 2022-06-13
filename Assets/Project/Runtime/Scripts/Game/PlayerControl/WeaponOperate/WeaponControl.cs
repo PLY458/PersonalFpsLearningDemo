@@ -43,6 +43,9 @@ namespace FPS_Weapon_Control
         // 武器序列相关
         List<int> autoReloadGun;
 
+        public List<WeaponHandler> weaponInventory = new List<WeaponHandler>();
+        public int selectedWeapon = -1;
+        int putAwayWeapon = -1;
         // 
         [Range(1f, 2f)]
         public float sprintADSMultiplier = 1.25f;
@@ -58,6 +61,8 @@ namespace FPS_Weapon_Control
         public bool input_Aiming;
         [HideInInspector]
         public bool input_Reload;
+        [HideInInspector]
+        public float input_Scroll;
 
         // 武器性能数据
         float fireTimer = 0;
@@ -66,10 +71,12 @@ namespace FPS_Weapon_Control
         public bool toggleADS = false;
         // 是否触发射击
         public bool triggerShooting = false;
-        private int continuousShots;
+        private int continuousShots = 0;
+        int semiCalculations = 16;
         private bool onShootUp;
         // 武器散布
-        public float bulletSpread = 0.01f;
+        private float bulletSpread = 0.01f;
+        private float fireDelayTimer;
 
         // 确认是否瞄准
         public bool IsAiming { get {
@@ -106,6 +113,12 @@ namespace FPS_Weapon_Control
             }
         }
 
+        public bool IsWeaponSelected {
+            get {
+                return (selectedWeapon >= 0 && selectedWeapon < weaponInventory.Count);
+            }
+        }
+
 
         private void Start()
         {
@@ -115,22 +128,83 @@ namespace FPS_Weapon_Control
             EventCenter.GetInstance().AddEventListener<bool>("GetAimInput", (input) => input_Aim = input);
             EventCenter.GetInstance().AddEventListener<bool>("GetAimKeeper", (input) => input_Aiming = input);
             EventCenter.GetInstance().AddEventListener<bool>("GetReloadInput", (input) => input_Reload = input);
+            EventCenter.GetInstance().AddEventListener<float>("GetMouseScroll", (input) => input_Scroll = input);
+            
 
             InitWeapons();
         }
 
         private void Update()
         {
+            handler_Current = (IsWeaponSelected) ? weaponInventory[selectedWeapon] : null;
+
             AimingHandler();
             SpreadHandler();
-            MovetionHandler();
-
+            SwitchWeaponHandler();
             if ((int)weaponStu >= 2)
                 return;
 
+            MovetionHandler();
             FireWeaponHandler();
             ManualReloadHandler();
         }
+
+        private void SwitchWeaponHandler()
+        {
+            if (triggerShooting || IsBlocking) return;
+            if (IsWeaponSelected)
+            {
+                float scroll = input_Scroll;
+                if (scroll >= 0.1f)
+                    ChangeSelectedGun(1);
+                else if (scroll <= -0.1f)
+                    ChangeSelectedGun(-1);
+            }
+        }
+
+        private void ChangeSelectedGun(int add)
+        {
+
+            if (weaponStu != E_Weapon_Status.Swapping)
+            {
+                //source.Stop(); //Stop reloading SFX if playing
+                AudioMgr.GetInstance().StopSound("Weapon");
+                AudioMgr.GetInstance().PlaySound("Weapon", "Select");
+                //fireDelayTimer = 0; //Reset the fire delay
+                weaponInventory[selectedWeapon].PutAwayWeapon(TakeOutSelectedGun);
+                weaponStu = E_Weapon_Status.Swapping;
+                putAwayWeapon = selectedWeapon;
+            }
+
+            selectedWeapon += add;
+            if (selectedWeapon < 0)
+                selectedWeapon += weaponInventory.Count;
+            else if (selectedWeapon >= weaponInventory.Count)
+                selectedWeapon -= weaponInventory.Count;
+        }
+
+        public void TakeOutSelectedGun()
+        {
+            if (putAwayWeapon >= 0)
+            {
+                weaponInventory[putAwayWeapon].gameObject.SetActive(false);
+                putAwayWeapon = -1;
+            }
+
+            EventCenter.GetInstance().EventTrigger("SetWeapon_weaponBar", handler_Current);
+            handler_Current.InitHandler();
+            weaponInventory[selectedWeapon].gameObject.SetActive(true);
+            weaponStu = E_Weapon_Status.TakingOut;
+        }
+
+        public void TakeWeaponOut(int reloadIndex)
+        {
+            
+            weaponStu = E_Weapon_Status.Ready;
+            if (reloadIndex >= 0)
+                AutoReloadGun(reloadIndex);
+        }
+
 
         private void InitWeapons()
         {
@@ -138,8 +212,20 @@ namespace FPS_Weapon_Control
 
             weaponStu = E_Weapon_Status.Ready;
             // 武器序列初始化
+            foreach (var w in weaponInventory)
+            {
 
-            EventCenter.GetInstance().EventTrigger("SetWeapon_weaponBar", handler_Current);
+                w.gameObject.SetActive(false);
+            }
+                
+            if (IsWeaponSelected)
+            {
+                weaponInventory[selectedWeapon].InitHandler();
+                weaponInventory[selectedWeapon].gameObject.SetActive(true);
+                EventCenter.GetInstance().EventTrigger("SetWeapon_weaponBar", weaponInventory[selectedWeapon]);
+            }
+
+            //EventCenter.GetInstance().EventTrigger("SetWeapon_weaponBar", handler_Current);
         }
 
         // 运动状态切换
@@ -229,7 +315,7 @@ namespace FPS_Weapon_Control
         {
             WeaponObject curWeapon = handler_Current.weapon;
             float fov = curWeapon.aimFOV;
-            PlayController.GetInstance().movement_Camera.SetFOV(aiming, curWeapon.aimFOV, curWeapon.aimDownSpeed, curWeapon.aimDis);
+            PlayController.GetInstance().movement_Camera.SetFOV(aiming, curWeapon.aimFOV, curWeapon.aimDownSpeed);
         }
 
         void SpreadHandler()
@@ -258,7 +344,17 @@ namespace FPS_Weapon_Control
                 bulletSpread = 0.01f;
         }
 
+        void FireDelayHandler()
+        {
+            if (!handler_Current)
+            {
+                fireDelayTimer = 0;
+                return;
+            }
 
+            float adjust = (IsReadyToFire && input_Fire) ? Time.deltaTime : -(Time.deltaTime * handler_Current.weapon.fireCooldownSpeed);
+            fireDelayTimer = Mathf.Clamp(fireDelayTimer + adjust, 0, handler_Current.weapon.fireDelay);
+        }
 
         void FireWeaponHandler()
         {
@@ -302,9 +398,12 @@ namespace FPS_Weapon_Control
                     // 优先启动还未完成自动装填的枪械序列
                     if (autoReloadGun.Count > 0 && autoReloadGun.Contains(handler_Current.weaponIndex))
                     {
-                        if (IsBlocking) return;
-                        if (!handler_Current.ReadyToReload) return;
-                        if (handler_Current.handlerStu == E_Handler_Status.Reloading) return;
+                        if (IsBlocking)
+                            return;
+                        if (!handler_Current.ReadyToReload)
+                            return;
+                        if (handler_Current.handlerStu == E_Handler_Status.Reloading)
+                            return;
 
                         if (ReloadSelectedGun())
                             autoReloadGun.Remove(handler_Current.weaponIndex);
@@ -317,11 +416,17 @@ namespace FPS_Weapon_Control
                     //}
 
                     if (!IsReadyToFire)
-                            return;
+                    {
+                        //if(input_Fire)
+                        //    AudioMgr.GetInstance().PlaySound("Weapon", "Foley");
+
+                        return;
+                    }
+                            
 
                     if (weapon.fireModel == E_FireModel.Auto && input_Fire)
                     {
-                        //continuousShots++;
+                        continuousShots++;
                         FireWeapon(weapon);
                     }
                     else
@@ -340,7 +445,7 @@ namespace FPS_Weapon_Control
 
                         if (fire)
                         {
-                            //continuousShots = 0;
+                            continuousShots = 0;
                             FireWeapon(weapon);
                         }
                     }
@@ -358,23 +463,23 @@ namespace FPS_Weapon_Control
             switch (weapon.fireModel)
             {
                 case E_FireModel.Semi:
-                    //PlayShotSFX();
-                    //float addTime = gun.firerate / (float)semiCalculations;
-                    //StartCoroutine(singleShot());
-                    //if (!gunHandler.ShootGun())
-                    //    AutoReloadGun(gunHandler.gunIndex);
-                    //IEnumerator singleShot()
-                    //{
-                    //    SimulateShot();
-                    //    for (int i = 0; i < semiCalculations; i++)
-                    //    {
-                    //        continuousShots++;
-                    //        ApplyRecoil(addTime);
-                    //        yield return new WaitForSeconds(addTime);
-                    //    }
-                    //    shootingGun = false;
-                    //}
-                    //fireDelayTimer = 0; //Restart the timer if semi or burst
+                    AudioMgr.GetInstance().PlaySound("Weapon", "Fire");
+                    float addTime = weapon.fireRate / (float)semiCalculations;
+                    StartCoroutine(singleShot());
+                    if (!handler_Current.FireWeapon())
+                        AutoReloadGun(handler_Current.weaponIndex);
+                    IEnumerator singleShot()
+                    {
+                        SimulateShot();
+                        for (int i = 0; i < semiCalculations; i++)
+                        {
+                            continuousShots++;
+                            ApplyRecoil(addTime);
+                            yield return new WaitForSeconds(addTime);
+                        }
+                        triggerShooting = false;
+                    }
+                    fireDelayTimer = 0; //Restart the timer if semi or burst
                     break;
                 case E_FireModel.Auto:
                     AudioMgr.GetInstance().PlaySound("Weapon","Fire");
@@ -420,33 +525,40 @@ namespace FPS_Weapon_Control
 
             float aimAdjust = (IsAiming) ? weapon.aimDownMultiplier : 1f;
 
-            //Vector3 shotRecoil = Vector3.zero;
-            //if (weapon.fireModel == E_FireModel.Auto)
-            //    shotRecoil = weapon.recoil.GetRecoil(continuousShots, gun.ammoClip, gun.cyclesInClip);
-            ////else if (gun.shooting == GunObject.ShootType.burst)
-            ////    shotRecoil = gun.recoil.GetRecoil(continuousShots, gun.burstShot, 1);
-            ////else if (gun.shooting == GunObject.ShootType.semi)
-            ////    shotRecoil = gun.recoil.GetRecoil(continuousShots, semiCalculations);
+            Vector3 shotRecoil = Vector3.zero;
+            if (weapon.fireModel == E_FireModel.Auto)
+                shotRecoil = weapon.recoilInfo.GetRecoil(continuousShots, weapon.ammoClip, weapon.cyclesInClip);
+            //else if (gun.shooting == GunObject.ShootType.burst)
+            //    shotRecoil = gun.recoil.GetRecoil(continuousShots, gun.burstShot, 1);
+            else if (weapon.fireModel == E_FireModel.Semi)
+                shotRecoil = weapon.recoilInfo.GetRecoil(continuousShots, semiCalculations);
 
-            //shotRecoil *= aimAdjust;
-            //cameraMovement.AddRecoil(shotRecoil, overTime);
+            shotRecoil *= aimAdjust;
+            PlayController.GetInstance().movement_Camera.AddRecoil(shotRecoil, firerate);
 
-            //shotRecoil.y = 0;
-            //float z = shotRecoil.z;
-            //shotRecoil.x = gun.recoil.xRecoil.EvaluteValue(Random.Range(0.0f, 1.0f));
-            //shotRecoil.x *= aimAdjust;
-            //shotRecoil *= overTime;
-            //shotRecoil.z = z;
+            shotRecoil.y = 0;
+            float z = shotRecoil.z;
+            shotRecoil.x = weapon.recoilInfo.xRecoil.EvaluteValue(Random.Range(0.0f, 1.0f));
+            shotRecoil.x *= aimAdjust;
+            shotRecoil *= firerate;
+            shotRecoil.z = z;
 
-            //GunRecoil(shotRecoil, overTime);
+            GunRecoil(shotRecoil, firerate);
         }
 
-        private void AutoReloadGun(int weaponIndex)
+        void GunRecoil(Vector3 recoil, float time)
         {
-/*         if (gunInventory[index].gun.startingClips < 0) return;*/ //We won't reload a gun that cannot reload
-
-            if (!autoReloadGun.Contains(weaponIndex))
-                autoReloadGun.Add(weaponIndex);
+            float recoilElapsed = 0;
+            StartCoroutine(recoilIncrease());
+            IEnumerator recoilIncrease()
+            {
+                while (recoilElapsed < time)
+                {
+                    recoilElapsed += Time.deltaTime;
+                    handler_Current.AddRecoil(recoil * Time.deltaTime);
+                    yield return null;
+                }
+            }
         }
 
         private void SimulateShot()
@@ -562,6 +674,26 @@ namespace FPS_Weapon_Control
             //}
             return handler_Current.ReloadGun();
 
+        }
+
+        private void AutoReloadGun(int weaponIndex)
+        {
+/*         if (gunInventory[index].gun.startingClips < 0) return;*/ //We won't reload a gun that cannot reload
+
+            if (!autoReloadGun.Contains(weaponIndex))
+                autoReloadGun.Add(weaponIndex);
+        }
+
+        public void RefillAmmo()
+        {
+            foreach (var handler in weaponInventory)
+            {
+                var gun = handler.weapon;
+                if (gun.startingClips >= 0)
+                    handler.totalAmmo = gun.ammoClip * gun.startingClips;
+                else
+                    handler.ammoInClip = gun.ammoClip;
+            }
         }
     }
 

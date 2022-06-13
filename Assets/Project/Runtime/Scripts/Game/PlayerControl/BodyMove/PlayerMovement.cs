@@ -53,6 +53,8 @@ namespace FPS_Movement_Control
         [HideInInspector]
         public Vector3 pos_Contact;
 
+
+
         public bool Is_Grounded { get => is_Grounded;  }
         private bool is_Grounded = false;
 
@@ -82,6 +84,7 @@ namespace FPS_Movement_Control
         // 蹲俯相关数据
         public float Height_Crouch { get => height_Crouch; }
 
+
         [SerializeField]
         private float height_Crouch = 1f;
         [SerializeField]
@@ -105,8 +108,8 @@ namespace FPS_Movement_Control
         // Debug相关
         [SerializeField]
         private Mesh mesh_playWalking, mesh_playCrouch;
-        [SerializeField]
-        [Range(0f, 1f)] private float scale_Debug = 0.5f;
+        //[SerializeField]
+        //[Range(0f, 1f)] private float scale_Debug = 0.5f;
 
 
         private void Start()
@@ -118,13 +121,16 @@ namespace FPS_Movement_Control
             info_Player = new PlayerIntractInfo(controller.radius, controller.height, height_Crouch);
             stamina = time_Sprint;
 
-            // TODO 嵌入贴墙跑
             SpecialMoveType sliding = GetComponent<SlidingMovement>();
             SpecialMoveType vaulting = GetComponent<VaultOverMovement>();
             SpecialMoveType labbering = GetComponent<LabberClimbMovement>();
+            SpecialMoveType grabLedge = GetComponent<GrabLedgeMovement>();
+            SpecialMoveType climbLedge = GetComponent<ClimbLedgeMovement>();
             sliding.InitMovement();
             vaulting.InitMovement();
             labbering.InitMovement();
+            grabLedge.InitMovement();
+            climbLedge.InitMovement();
         }
 
 
@@ -141,6 +147,8 @@ namespace FPS_Movement_Control
             if (time_Enforce > 0)
                 time_Enforce -= Time.deltaTime;
 
+            // 更新边缘攀爬预指令
+            //UpdateLedgeDown();
             ReadyToSpecialMove();
             UpdateMovingStatus();
 
@@ -167,6 +175,7 @@ namespace FPS_Movement_Control
                     
                 is_Grounded = (controller.Move(dir_GroundMove * Time.deltaTime) & CollisionFlags.Below) != 0;
             }
+
 
             // 特殊移动状态判定
             foreach (SpecialMoveType moveType in specialMovements)
@@ -435,11 +444,13 @@ namespace FPS_Movement_Control
 
         #region 特殊动作相关
 
+
+
         // 进入特殊运动状态判定
         private void ReadyToSpecialMove()
         {
             //已处于特殊动作状态
-            if ((int)t_status >= 5)
+            if ((int)t_status >= 5 && (int)t_status < 7)
                 trigger_SpecialMove = false;
             else if (!trigger_SpecialMove)
             {
@@ -485,7 +496,6 @@ namespace FPS_Movement_Control
             is_Grounded = (controller.Move(dir_GroundMove * Time.deltaTime) & CollisionFlags.Below) != 0;
 
         }
-
 
         public void SetEnforceMove(Vector3 dir, float time, bool isEnforcegravity)
         {
@@ -549,35 +559,35 @@ namespace FPS_Movement_Control
 
 #if UNITY_EDITOR
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.green;
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.green;
 
-            if (info_Player != null)
-            {
-                Vector3 bottom = transform.position - (Vector3.up * (info_Player.height / 2));
-                if (!InCrouching())
-                {
-                    Gizmos.DrawWireMesh(mesh_playWalking,
-                        bottom,
-                        transform.rotation,
-                        Vector3.one * scale_Debug);
-                }
-                else
-                {
-                    bottom = transform.position - (Vector3.up * ((height_Crouch / 2) - info_Player.radius));
-                    Gizmos.DrawWireMesh(mesh_playCrouch,
-                    bottom,
-                    transform.rotation,
-                    Vector3.one * scale_Debug);
-                }
+        //    if (info_Player != null)
+        //    {
+        //        Vector3 bottom = transform.position - (Vector3.up * (info_Player.height / 2));
+        //        if (!InCrouching())
+        //        {
+        //            Gizmos.DrawWireMesh(mesh_playWalking,
+        //                bottom,
+        //                transform.rotation,
+        //                Vector3.one * scale_Debug);
+        //        }
+        //        else
+        //        {
+        //            bottom = transform.position - (Vector3.up * ((height_Crouch / 2) - info_Player.radius));
+        //            Gizmos.DrawWireMesh(mesh_playCrouch,
+        //            bottom,
+        //            transform.rotation,
+        //            Vector3.one * scale_Debug);
+        //        }
 
-            }
+        //    }
 
 
             
 
-        }
+        //}
 
 #endif
 

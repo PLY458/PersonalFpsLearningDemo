@@ -72,7 +72,7 @@ namespace FPS_Movement_Control
 
                 normel_Labber = -hit.normal;
 
-                if (HasObjectInfront(0.1f) && PlayController.GetInstance().input_HoriDir.y > 0.02f)
+                if (HasObjectInfront(0.05f) && PlayController.GetInstance().input_HoriDir.y > 0.02f)
                 {  
                     PlayController.GetInstance().SwitchStatus(changeTo);
                 }

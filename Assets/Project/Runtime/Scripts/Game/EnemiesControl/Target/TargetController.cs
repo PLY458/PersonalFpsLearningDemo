@@ -21,14 +21,12 @@ public class TargetController : SingletonMono<TargetController>
 
     TargetDamageObj tempTarget;
 
-    public void Start()
+
+    public void AddTargetList(TargetDamageObj obj)
     {
-        if (targetList != null)
+        if (obj != null)
         {
-            foreach (var target in targetList)
-            {
-                target.InitTarget();
-            }
+            targetList.Add(obj);
         }
     }
 
@@ -39,15 +37,36 @@ public class TargetController : SingletonMono<TargetController>
 
         if (tempTarget != null)
         {
+            
+
             if (zone.damageZone == E_DamageZone.Head)
             {
                 tempTarget.GetDamage(damage * headmult);
+                
             }
             else
             {
                 tempTarget.GetDamage(damage);
             }
+
+            if (tempTarget.IsDied)
+            {
+                tempTarget.OnTargetDied();
+                if (zone.damageZone == E_DamageZone.Head)
+                {
+                    CollectMgr.GetInstance().GatherPoint(HeadPoint);
+                }
+                else
+                {
+                    CollectMgr.GetInstance().GatherPoint(BodyPoint);
+                }
+                    
+            }
+
         }
 
     }
+
+
+
 }
